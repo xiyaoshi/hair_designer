@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -120,17 +121,9 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            resultView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            resultView = (ImageView) findViewById(R.id.gouShengEr);
+            resultView.setImageURI(selectedImage);
 
         }
 
@@ -142,6 +135,7 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent,0);
 
         //Crop.pickImage(this);
+        switchFragment(view);
     }
 
     public void openGallery(View view)
@@ -154,6 +148,7 @@ public class MainActivity extends AppCompatActivity
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         startActivityForResult(i, RESULT_LOAD_IMAGE);
+        switchFragment(view);
     }
 
 
