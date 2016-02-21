@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
     public void openCam(View view) {
 
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
