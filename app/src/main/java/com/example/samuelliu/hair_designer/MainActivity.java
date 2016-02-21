@@ -21,6 +21,13 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,6 +49,14 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container , fragment)
                 .commit();
     }
+
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,10 +135,24 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            RawClassifier classifier = null;
             Uri selectedImage = data.getData();
-
+            Bitmap img_bitmap = null;
+            try{
+                img_bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+            }catch (java.io.FileNotFoundException e){
+                e.printStackTrace();
+            }catch(java.io.IOException e){
+                e.printStackTrace();
+            }
+            Mat to_classifier = new Mat();
+            Utils.bitmapToMat(img_bitmap, to_classifier);
+            classifier = new RawClassifier(to_classifier);
+            Mat ret_only_face = classifier.face_contour_bymask_new();
+            Utils.matToBitmap(ret_only_face, img_bitmap);
             resultView = (ImageView) findViewById(R.id.gouShengEr);
-            resultView.setImageURI(selectedImage);
+            resultView.setImageBitmap(img_bitmap);
+            //resultView.setImageURI(selectedImage);
 
         }
 
