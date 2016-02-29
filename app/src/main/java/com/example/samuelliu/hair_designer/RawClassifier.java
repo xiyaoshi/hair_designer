@@ -5,18 +5,7 @@ package com.example.samuelliu.hair_designer;
         import org.opencv.imgproc.Imgproc;
         import org.opencv.objdetect.CascadeClassifier;
         import android.content.Context;
-        import android.support.v7.app.ActionBarActivity;
-        import android.os.Bundle;
-        import android.view.Menu;
-        import android.view.MenuItem;
         import android.util.Log;
-        import android.view.WindowManager;
-
-        import org.opencv.android.*;
-        import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener;
-        import org.opencv.core.*;
-        import org.opencv.imgproc.Imgproc;
-        import org.opencv.objdetect.CascadeClassifier;
 
         import java.io.File;
         import java.io.FileOutputStream;
