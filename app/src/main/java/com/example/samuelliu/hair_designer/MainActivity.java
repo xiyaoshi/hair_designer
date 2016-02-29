@@ -31,6 +31,7 @@ import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import layout.FragmentOne;
 
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity
             Mat to_classifier = new Mat();
             Utils.bitmapToMat(img_bitmap, to_classifier);
             classifier = new RawClassifier(to_classifier);
+            classifier.setContext(this);
             Mat ret_only_face = classifier.face_contour_bymask_new();
             Utils.matToBitmap(ret_only_face, img_bitmap);
             resultView = (ImageView) findViewById(R.id.gouShengEr);

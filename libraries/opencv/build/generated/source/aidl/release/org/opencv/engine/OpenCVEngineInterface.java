@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/samuelliu/AndroidStudioProjects/Hair_designer/libraries/opencv/src/org/opencv/engine/OpenCVEngineInterface.aidl
+ * Original file: C:\\Users\\shixi_000\\Desktop\\project\\hair_designer\\libraries\\opencv\\src\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**

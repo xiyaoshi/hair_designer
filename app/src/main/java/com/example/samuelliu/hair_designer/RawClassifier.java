@@ -4,18 +4,39 @@ package com.example.samuelliu.hair_designer;
         import org.opencv.imgcodecs.Imgcodecs;
         import org.opencv.imgproc.Imgproc;
         import org.opencv.objdetect.CascadeClassifier;
+        import android.content.Context;
+        import android.support.v7.app.ActionBarActivity;
+        import android.os.Bundle;
+        import android.view.Menu;
+        import android.view.MenuItem;
+        import android.util.Log;
+        import android.view.WindowManager;
+
+        import org.opencv.android.*;
+        import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener;
+        import org.opencv.core.*;
+        import org.opencv.imgproc.Imgproc;
+        import org.opencv.objdetect.CascadeClassifier;
+
+        import java.io.File;
+        import java.io.FileOutputStream;
+        import java.io.InputStream;
 
 public class RawClassifier {
     private Mat my_image = null;
     private String filename = null;
+    private Context context;
     private Rect my_facerect = null;
     private ColorRecg_YCrCb face_color_whithin = null;
-    private String classifier_path = "./classifier_data/haarcascade_frontalface_default.xml";
+    private String classifier_path = "haarcascade_frontalface_default.xml";
     public RawClassifier(String in_file){
         filename = in_file;
         System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
         my_image = Imgcodecs.imread(filename);
         my_facerect = null;
+    }
+    public void setContext(Context curr){
+        context = curr;
     }
     public RawClassifier(Mat in_image){
         filename = "UNUSED";
@@ -34,9 +55,29 @@ public class RawClassifier {
             return my_facerect;
         //start the detecting
         System.out.println("\nRunning DetectFaceDemo");
-        CascadeClassifier face_rect_dtect = new CascadeClassifier(classifier_path);
+        CascadeClassifier face_rect_dtect = null;
+        try{
+            // Copy the resource into a temp file so OpenCV can load it
+            InputStream is = context.getResources().openRawResource(R.raw.haarcascade_frontalface_default);
+            File cascadeDir = context.getDir("cascade", Context.MODE_APPEND);
+            File mCascadeFile = new File(cascadeDir, classifier_path);
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+
+            face_rect_dtect = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+            // Load the cascade classifier
+        } catch (Exception e) {
+            Log.e("OpenCVActivity", "Error loading cascade", e);
+        }
         MatOfRect face_rect_out = new MatOfRect();
-        face_rect_dtect.detectMultiScale(my_image, face_rect_out);
+        if ( face_rect_dtect != null )face_rect_dtect.detectMultiScale(my_image, face_rect_out);
         System.out.println(String.format("Detected %s faces", face_rect_out.toArray().length));
         //we have a matrix of rects representing the position of faces
         //choose the most obvious one
@@ -125,7 +166,6 @@ public class RawClassifier {
 
     //TODO: if we can get some input.....
     public void face_contour_bymask(short[][] matrix){
-        //creating the mask which are all background first. Then using the rect to define the foreground.
         Rect face_rawrange = face_rect();
         Mat mask = new Mat(my_image.rows(), my_image.cols(), CvType.CV_8U);
         mask.setTo(new Scalar(Imgproc.GC_PR_BGD));
